@@ -1,0 +1,41 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("posts"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="首页">
+  <section class="intro">
+    <p class="eyebrow">Personal Blog</p>
+    <h1>记录想法、代码和一路迭代的过程。</h1>
+    <p>
+      这里会放我的文章、项目笔记，以及这个博客从第一版慢慢长出来的每一步。
+    </p>
+  </section>
+
+  <section class="post-list" aria-labelledby="posts-title">
+    <h2 id="posts-title">最新文章</h2>
+    {
+      posts.length > 0 ? (
+        <ul>
+          {posts.map((post) => (
+            <li>
+              <a href={`/posts/${post.slug}/`}>
+                <span>{post.data.title}</span>
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {post.data.pubDate.toLocaleDateString("zh-CN")}
+                </time>
+              </a>
+              <p>{post.data.description}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>还没有文章。</p>
+      )
+    }
+  </section>
+</BaseLayout>
