@@ -5,6 +5,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const posts = (await getCollection("posts"))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="首页">
@@ -23,7 +24,7 @@ const posts = (await getCollection("posts"))
         <ul>
           {posts.map((post) => (
             <li>
-              <a href={`/posts/${post.slug}/`}>
+              <a href={`${base}posts/${post.slug}/`}>
                 <span>{post.data.title}</span>
                 <time datetime={post.data.pubDate.toISOString()}>
                   {post.data.pubDate.toLocaleDateString("zh-CN")}

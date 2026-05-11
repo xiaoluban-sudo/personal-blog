@@ -6,6 +6,7 @@ interface Props {
 
 const { title, description = "一个从零开始慢慢生长的个人博客。" } = Astro.props;
 const pageTitle = title === "首页" ? "我的博客" : `${title} - 我的博客`;
+const base = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
@@ -15,14 +16,14 @@ const pageTitle = title === "首页" ? "我的博客" : `${title} - 我的博客
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{pageTitle}</title>
-    <link rel="stylesheet" href="/styles/global.css" />
+    <link rel="stylesheet" href={`${base}styles/global.css`} />
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="/">我的博客</a>
+      <a class="brand" href={base}>我的博客</a>
       <nav aria-label="主导航">
-        <a href="/">文章</a>
-        <a href="/about">关于</a>
+        <a href={base}>文章</a>
+        <a href={`${base}about/`}>关于</a>
       </nav>
     </header>
     <main>
