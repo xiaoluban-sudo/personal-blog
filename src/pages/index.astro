@@ -10,6 +10,7 @@ const base = import.meta.env.BASE_URL.endsWith("/")
   : `${import.meta.env.BASE_URL}/`;
 
 const categories = [...new Set(posts.map((post) => post.data.category))];
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
 ---
 
 <BaseLayout title="首页">
@@ -35,6 +36,15 @@ const categories = [...new Set(posts.map((post) => post.data.category))];
       )
     }
     {
+      tags.length > 0 && (
+        <nav class="tag-list home-tags" aria-label="文章标签">
+          {tags.map((tag) => (
+            <a href={`${base}tags/${encodeURIComponent(tag)}/`}>#{tag}</a>
+          ))}
+        </nav>
+      )
+    }
+    {
       posts.length > 0 ? (
         <ul>
           {posts.map((post) => (
@@ -51,6 +61,15 @@ const categories = [...new Set(posts.map((post) => post.data.category))];
               >
                 {post.data.category}
               </a>
+              {
+                post.data.tags.length > 0 && (
+                  <nav class="tag-list post-card-tags" aria-label={`${post.data.title} 的标签`}>
+                    {post.data.tags.map((tag) => (
+                      <a href={`${base}tags/${encodeURIComponent(tag)}/`}>#{tag}</a>
+                    ))}
+                  </nav>
+                )
+              }
               <p>{post.data.description}</p>
             </li>
           ))}

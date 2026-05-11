@@ -13,12 +13,13 @@ pnpm preview
 ## 新建文章
 
 ```bash
-pnpm new:post "我的第二篇文章" --category 技术 --description "记录一次博客迭代。"
+pnpm new:post "我的第二篇文章" --category 技术 --tags Astro,部署 --description "记录一次博客迭代。"
 ```
 
 文章会生成在 `src/content/posts/` 目录下。可选参数：
 
 - `--category <name>`：文章分类，默认 `随记`
+- `--tags <list>`：文章标签，用英文逗号分隔，例如 `Astro,部署`
 - `--description <text>`：文章简介
 - `--date <yyyy-mm-dd>`：发布日期，默认今天
 - `--draft`：创建为草稿

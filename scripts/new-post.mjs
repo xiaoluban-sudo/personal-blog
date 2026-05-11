@@ -12,6 +12,7 @@ Usage:
 
 Options:
   --category <name>      Post category, default: 随记
+  --tags <list>          Comma-separated tags, example: Astro,部署
   --description <text>   Post description, default: 暂无简介。
   --date <yyyy-mm-dd>    Publish date, default: today
   --draft                Create as a draft
@@ -23,6 +24,7 @@ function parseArgs(argv) {
   const args = {
     title: "",
     category: "随记",
+    tags: [],
     description: "暂无简介。",
     date: new Date().toISOString().slice(0, 10),
     draft: false,
@@ -42,6 +44,12 @@ function parseArgs(argv) {
       args.dryRun = true;
     } else if (value === "--category" || value === "-c") {
       args.category = readOptionValue(argv, index, value);
+      index += 1;
+    } else if (value === "--tags" || value === "-t") {
+      args.tags = readOptionValue(argv, index, value)
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean);
       index += 1;
     } else if (value === "--description" || value === "-d") {
       args.description = readOptionValue(argv, index, value);
@@ -84,6 +92,10 @@ function escapeYaml(value) {
   return String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
 
+function formatYamlArray(values) {
+  return `[${values.map((value) => `"${escapeYaml(value)}"`).join(", ")}]`;
+}
+
 function uniqueFilePath(slug) {
   let candidate = path.join(postsDir, `${slug}.md`);
   let suffix = 2;
@@ -122,6 +134,7 @@ try {
 title: "${escapeYaml(args.title)}"
 description: "${escapeYaml(args.description)}"
 category: "${escapeYaml(args.category)}"
+tags: ${formatYamlArray(args.tags)}
 pubDate: "${args.date}"
 draft: ${args.draft}
 ---

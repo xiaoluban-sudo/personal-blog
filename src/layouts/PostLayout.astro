@@ -5,10 +5,11 @@ interface Props {
   title: string;
   description: string;
   category: string;
+  tags: string[];
   pubDate: Date;
 }
 
-const { title, description, category, pubDate } = Astro.props;
+const { title, description, category, tags, pubDate } = Astro.props;
 const base = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
@@ -29,6 +30,15 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
       </p>
       <h1>{title}</h1>
       <p class="post-description">{description}</p>
+      {
+        tags.length > 0 && (
+          <nav class="tag-list post-tags" aria-label="文章标签">
+            {tags.map((tag) => (
+              <a href={`${base}tags/${encodeURIComponent(tag)}/`}>#{tag}</a>
+            ))}
+          </nav>
+        )
+      }
     </header>
     <div class="post-content">
       <slot />

@@ -74,7 +74,8 @@ nav a {
 }
 
 .category-nav a,
-.post-category {
+.post-category,
+.tag-list a {
   display: inline-flex;
   align-items: center;
   width: fit-content;
@@ -88,6 +89,18 @@ nav a {
   line-height: 1.4;
   text-decoration: none;
   background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-list a {
+  border-color: var(--line);
+  color: var(--muted);
+  background: var(--surface);
 }
 
 main {
@@ -189,6 +202,14 @@ h2 {
   margin-top: 10px;
 }
 
+.home-tags {
+  margin-top: 12px;
+}
+
+.post-card-tags {
+  margin-top: 10px;
+}
+
 .page,
 .post {
   max-width: 720px;
@@ -226,6 +247,10 @@ h2 {
 .post-description {
   margin: 18px 0 0;
   font-size: 19px;
+}
+
+.post-tags {
+  margin-top: 18px;
 }
 
 .post-content {
