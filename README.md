@@ -24,3 +24,11 @@ pnpm new:post "我的第二篇文章" --category 技术 --tags Astro,部署 --de
 - `--date <yyyy-mm-dd>`：发布日期，默认今天
 - `--draft`：创建为草稿
 - `--dry-run`：只预览将要生成的文件路径
+
+## RSS
+
+订阅地址：
+
+```text
+https://xiaoluban-sudo.github.io/personal-blog/rss.xml
+```
