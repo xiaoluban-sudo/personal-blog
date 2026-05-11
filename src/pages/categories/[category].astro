@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts", ({ data }) => !data.draft);
+  const categories = [...new Set(posts.map((post) => post.data.category))];
+
+  return categories.map((category) => ({
+    params: { category },
+    props: {
+      category,
+      posts: posts
+        .filter((post) => post.data.category === category)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    }
+  }));
+}
+
+const { category, posts } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+---
+
+<BaseLayout title={category} description={`分类：${category}`}>
+  <section class="page">
+    <p class="eyebrow">Category</p>
+    <h1>{category}</h1>
+  </section>
+
+  <section class="post-list category-posts" aria-labelledby="category-posts-title">
+    <h2 id="category-posts-title">这个分类下的文章</h2>
+    <ul>
+      {posts.map((post) => (
+        <li>
+          <a href={`${base}posts/${post.slug}/`}>
+            <span>{post.data.title}</span>
+            <time datetime={post.data.pubDate.toISOString()}>
+              {post.data.pubDate.toLocaleDateString("zh-CN")}
+            </time>
+          </a>
+          <p>{post.data.description}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

@@ -4,10 +4,14 @@ import BaseLayout from "./BaseLayout.astro";
 interface Props {
   title: string;
   description: string;
+  category: string;
   pubDate: Date;
 }
 
-const { title, description, pubDate } = Astro.props;
+const { title, description, category, pubDate } = Astro.props;
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
 const formattedDate = new Intl.DateTimeFormat("zh-CN", {
   year: "numeric",
   month: "long",
@@ -18,7 +22,11 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
 <BaseLayout title={title} description={description}>
   <article class="post">
     <header class="post-header">
-      <p class="post-date">{formattedDate}</p>
+      <p class="post-date">
+        <a href={`${base}categories/${encodeURIComponent(category)}/`}>{category}</a>
+        <span aria-hidden="true">/</span>
+        <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+      </p>
       <h1>{title}</h1>
       <p class="post-description">{description}</p>
     </header>

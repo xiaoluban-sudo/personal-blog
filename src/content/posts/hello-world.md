@@ -1,6 +1,7 @@
 ---
 title: "我为什么决定自己写一个博客"
 description: "记录这个博客从零开始的第一步。"
+category: "随记"
 pubDate: "2026-05-11"
 draft: false
 ---
