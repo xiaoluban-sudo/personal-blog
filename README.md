@@ -32,3 +32,11 @@ pnpm new:post "我的第二篇文章" --category 技术 --tags Astro,部署 --de
 ```text
 https://xiaoluban-sudo.github.io/personal-blog/rss.xml
 ```
+
+## Sitemap
+
+站点地图：
+
+```text
+https://xiaoluban-sudo.github.io/personal-blog/sitemap-index.xml
+```
