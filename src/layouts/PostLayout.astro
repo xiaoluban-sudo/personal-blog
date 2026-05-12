@@ -20,7 +20,13 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
 }).format(pubDate);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={title}
+  description={description}
+  ogType="article"
+  publishedTime={pubDate}
+  tags={tags}
+>
   <article class="post">
     <header class="post-header">
       <p class="post-date">

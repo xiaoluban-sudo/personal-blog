@@ -40,3 +40,13 @@ https://xiaoluban-sudo.github.io/personal-blog/rss.xml
 ```text
 https://xiaoluban-sudo.github.io/personal-blog/sitemap-index.xml
 ```
+
+## SEO
+
+页面会自动生成基础 SEO 信息，包括：
+
+- `description`
+- `canonical`
+- Open Graph
+- Twitter card
+- RSS 自动发现链接
