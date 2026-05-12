@@ -63,6 +63,8 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
         <a href={base}>文章</a>
         <a href={`${base}search/`}>搜索</a>
         <a href={`${base}archive/`}>归档</a>
+        <a href={`${base}categories/`}>分类</a>
+        <a href={`${base}tags/`}>标签</a>
         <a href={`${base}about/`}>关于</a>
         <a href={rssUrl}>RSS</a>
       </nav>
@@ -73,9 +75,11 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
     <main>
       <slot />
     </main>
+    <button class="back-to-top" type="button" aria-label="返回顶部">↑</button>
     <script is:inline>
       const button = document.querySelector(".theme-toggle");
       const icon = document.querySelector("[data-theme-icon]");
+      const backToTop = document.querySelector(".back-to-top");
 
       function syncThemeIcon() {
         const isDark = document.documentElement.dataset.theme === "dark";
@@ -91,6 +95,17 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
       });
 
       syncThemeIcon();
+
+      function syncBackToTop() {
+        backToTop.hidden = window.scrollY < 480;
+      }
+
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      window.addEventListener("scroll", syncBackToTop, { passive: true });
+      syncBackToTop();
     </script>
   </body>
 </html>

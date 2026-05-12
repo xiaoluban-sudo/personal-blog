@@ -103,6 +103,27 @@ nav a {
   outline-offset: 3px;
 }
 
+.back-to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--text);
+  font: inherit;
+  background: var(--surface);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--text) 14%, transparent);
+  cursor: pointer;
+}
+
+.back-to-top[hidden] {
+  display: none;
+}
+
 .category-nav {
   flex-wrap: wrap;
   gap: 10px;
@@ -289,6 +310,27 @@ h2 {
   margin-top: 18px;
 }
 
+.copy-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 36px;
+  margin-top: 18px;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.copy-link:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
 .toc {
   margin-top: 30px;
   padding: 18px 0 20px;
@@ -407,6 +449,35 @@ h2 {
   border-radius: 8px;
   text-decoration: none;
   background: var(--surface);
+}
+
+.taxonomy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  max-width: 760px;
+  margin-top: 42px;
+}
+
+.taxonomy-grid a {
+  display: grid;
+  gap: 6px;
+  min-height: 86px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-decoration: none;
+  background: var(--surface);
+}
+
+.taxonomy-grid span {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.taxonomy-grid strong {
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .search-page {

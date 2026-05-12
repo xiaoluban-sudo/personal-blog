@@ -8,6 +8,7 @@ interface Props {
   tags: string[];
   pubDate: Date;
   readingTime: number;
+  wordCount: number;
   previousPost?: {
     title: string;
     url: string;
@@ -30,6 +31,7 @@ const {
   tags,
   pubDate,
   readingTime,
+  wordCount,
   previousPost,
   nextPost,
   headings
@@ -60,6 +62,8 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
         <time datetime={pubDate.toISOString()}>{formattedDate}</time>
         <span aria-hidden="true">/</span>
         <span>{readingTime} 分钟阅读</span>
+        <span aria-hidden="true">/</span>
+        <span>约 {wordCount} 字</span>
       </p>
       <h1>{title}</h1>
       <p class="post-description">{description}</p>
@@ -72,6 +76,7 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
           </nav>
         )
       }
+      <button class="copy-link" type="button" data-copy-link>复制链接</button>
     </header>
     {
       toc.length > 1 && (
@@ -113,4 +118,22 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
       )
     }
   </article>
+  <script is:inline>
+    const copyButton = document.querySelector("[data-copy-link]");
+
+    copyButton?.addEventListener("click", async () => {
+      const originalText = copyButton.textContent;
+
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        copyButton.textContent = "已复制";
+      } catch {
+        copyButton.textContent = "复制失败";
+      }
+
+      window.setTimeout(() => {
+        copyButton.textContent = originalText;
+      }, 1400);
+    });
+  </script>
 </BaseLayout>

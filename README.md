@@ -75,6 +75,10 @@ https://xiaoluban-sudo.github.io/personal-blog/search/
 站点还包含这些阅读功能：
 
 - 阅读时间估算
+- 字数统计
 - 上一篇 / 下一篇
 - 文章归档页
 - 自定义 404 页面
+- 复制文章链接
+- 返回顶部
+- 分类 / 标签总览页

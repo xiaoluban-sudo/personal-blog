@@ -38,6 +38,10 @@ function getReadingTime(body: string) {
   const characters = body.replace(/\s/g, "").length;
   return Math.max(1, Math.ceil(Math.max(words / 220, characters / 500)));
 }
+
+function getWordCount(body: string) {
+  return body.replace(/\s/g, "").length;
+}
 ---
 
 <PostLayout
@@ -47,6 +51,7 @@ function getReadingTime(body: string) {
   tags={post.data.tags}
   pubDate={post.data.pubDate}
   readingTime={getReadingTime(post.body)}
+  wordCount={getWordCount(post.body)}
   previousPost={previousPost}
   nextPost={nextPost}
   headings={headings}

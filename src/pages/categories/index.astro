@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const posts = await getCollection("posts", ({ data }) => !data.draft);
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const categories = [...new Set(posts.map((post) => post.data.category))]
+  .map((category) => ({
+    name: category,
+    count: posts.filter((post) => post.data.category === category).length
+  }))
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "zh-CN"));
+---
+
+<BaseLayout title="分类" description="浏览所有文章分类。">
+  <section class="page">
+    <p class="eyebrow">Categories</p>
+    <h1>所有分类</h1>
+    <p>用大方向整理文章。</p>
+  </section>
+
+  <section class="taxonomy-grid" aria-label="分类列表">
+    {categories.map((category) => (
+      <a href={`${base}categories/${encodeURIComponent(category.name)}/`}>
+        <span>{category.name}</span>
+        <strong>{category.count} 篇</strong>
+      </a>
+    ))}
+  </section>
+</BaseLayout>
