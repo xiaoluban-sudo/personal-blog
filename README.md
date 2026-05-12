@@ -82,3 +82,14 @@ https://xiaoluban-sudo.github.io/personal-blog/search/
 - 复制文章链接
 - 返回顶部
 - 分类 / 标签总览页
+
+## Markdown 样式
+
+文章页优化了常见 Markdown 内容的显示，包括：
+
+- 代码块和行内代码
+- 引用块
+- 列表
+- 表格
+- 分割线
+- 图片
