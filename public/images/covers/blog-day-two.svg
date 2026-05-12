@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Blog iteration cover</title>
+  <desc id="desc">A layered interface board showing search, tags, navigation, and reading tools.</desc>
+  <rect width="1200" height="630" fill="#eef6f0"/>
+  <rect x="96" y="86" width="1008" height="458" rx="20" fill="#fffdf7" stroke="#b7c9b5" stroke-width="4"/>
+  <rect x="148" y="138" width="904" height="54" rx="14" fill="#24312b"/>
+  <circle cx="184" cy="165" r="10" fill="#f58f7c"/>
+  <circle cx="218" cy="165" r="10" fill="#f6d365"/>
+  <circle cx="252" cy="165" r="10" fill="#8fd4c1"/>
+  <rect x="148" y="232" width="250" height="214" rx="16" fill="#e7f0ff"/>
+  <rect x="436" y="232" width="250" height="214" rx="16" fill="#fff0df"/>
+  <rect x="724" y="232" width="328" height="214" rx="16" fill="#e7f7ef"/>
+  <rect x="190" y="286" width="144" height="18" rx="9" fill="#4776a8"/>
+  <rect x="190" y="330" width="164" height="12" rx="6" fill="#8294a8"/>
+  <rect x="478" y="286" width="130" height="18" rx="9" fill="#b46b42"/>
+  <rect x="478" y="330" width="168" height="12" rx="6" fill="#a9907c"/>
+  <rect x="770" y="286" width="214" height="18" rx="9" fill="#4f8f7b"/>
+  <rect x="770" y="330" width="236" height="12" rx="6" fill="#7c9c8c"/>
+  <rect x="188" y="482" width="824" height="16" rx="8" fill="#b7c9b5"/>
+</svg>

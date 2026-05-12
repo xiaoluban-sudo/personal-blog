@@ -29,6 +29,17 @@ pnpm new:post "我的第二篇文章" --category 技术 --tags Astro,部署 --de
 
 本地开发模式会显示 `draft: true` 的草稿文章，并带草稿标识；生产构建会自动隐藏草稿。
 
+## 文章封面
+
+文章可以在 frontmatter 中配置封面图：
+
+```md
+cover: "/images/covers/post.svg"
+coverAlt: "封面图描述"
+```
+
+本地图片建议放在 `public/images/covers/`，也可以填写 `https://` 开头的远程图片地址。新建文章脚本也支持 `--cover` 和 `--cover-alt` 参数。
+
 ## RSS
 
 订阅地址：

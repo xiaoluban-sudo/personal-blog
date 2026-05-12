@@ -10,6 +10,11 @@ const base = import.meta.env.BASE_URL.endsWith("/")
 const categories = [...new Set(posts.map((post) => post.data.category))];
 const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
 
+function getCoverUrl(cover: string) {
+  if (/^https?:\/\//.test(cover)) return cover;
+  return `${base}${cover.replace(/^\//, "")}`;
+}
+
 function getReadingTime(body: string) {
   const words = body.trim().split(/\s+/).filter(Boolean).length;
   const characters = body.replace(/\s/g, "").length;
@@ -53,6 +58,17 @@ function getReadingTime(body: string) {
         <ul>
           {posts.map((post) => (
             <li>
+              {
+                post.data.cover && (
+                  <a class="post-card-cover" href={`${base}posts/${post.slug}/`}>
+                    <img
+                      src={getCoverUrl(post.data.cover)}
+                      alt={post.data.coverAlt ?? ""}
+                      loading="lazy"
+                    />
+                  </a>
+                )
+              }
               <a href={`${base}posts/${post.slug}/`}>
                 <span>{post.data.title}{post.data.draft && "（草稿）"}</span>
                 <time datetime={post.data.pubDate.toISOString()}>

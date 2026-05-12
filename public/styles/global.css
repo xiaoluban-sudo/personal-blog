@@ -251,6 +251,22 @@ h2 {
   border-top: 0;
 }
 
+.post-list .post-card-cover {
+  display: block;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.post-card-cover img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+}
+
 .post-list a {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -346,6 +362,27 @@ h2 {
 .post-description {
   margin: 18px 0 0;
   font-size: 19px;
+}
+
+.post-cover {
+  margin: 26px 0 0;
+}
+
+.post-cover img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 8;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.post-cover figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
 }
 
 .post-tags {

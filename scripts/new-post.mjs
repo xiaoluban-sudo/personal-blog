@@ -15,6 +15,8 @@ Options:
   --tags <list>          Comma-separated tags, example: Astro,部署
   --description <text>   Post description, default: 暂无简介。
   --date <yyyy-mm-dd>    Publish date, default: today
+  --cover <path-or-url>   Optional cover image path, example: /images/covers/post.jpg
+  --cover-alt <text>      Cover image alt text
   --draft                Create as a draft
   --dry-run              Print the target path without writing a file
 `);
@@ -25,6 +27,8 @@ function parseArgs(argv) {
     title: "",
     category: "随记",
     tags: [],
+    cover: "",
+    coverAlt: "",
     description: "暂无简介。",
     date: new Date().toISOString().slice(0, 10),
     draft: false,
@@ -53,6 +57,12 @@ function parseArgs(argv) {
       index += 1;
     } else if (value === "--description" || value === "-d") {
       args.description = readOptionValue(argv, index, value);
+      index += 1;
+    } else if (value === "--cover") {
+      args.cover = readOptionValue(argv, index, value);
+      index += 1;
+    } else if (value === "--cover-alt") {
+      args.coverAlt = readOptionValue(argv, index, value);
       index += 1;
     } else if (value === "--date") {
       args.date = readOptionValue(argv, index, value);
@@ -130,10 +140,15 @@ try {
   validateDate(args.date);
 
   const filePath = uniqueFilePath(toSlug(args.title));
+  const coverFields = args.cover
+    ? `cover: "${escapeYaml(args.cover)}"
+coverAlt: "${escapeYaml(args.coverAlt)}"
+`
+    : "";
   const content = `---
 title: "${escapeYaml(args.title)}"
 description: "${escapeYaml(args.description)}"
-category: "${escapeYaml(args.category)}"
+${coverFields}category: "${escapeYaml(args.category)}"
 tags: ${formatYamlArray(args.tags)}
 pubDate: "${args.date}"
 draft: ${args.draft}

@@ -4,6 +4,8 @@ import BaseLayout from "./BaseLayout.astro";
 interface Props {
   title: string;
   description: string;
+  cover?: string;
+  coverAlt?: string;
   category: string;
   tags: string[];
   pubDate: Date;
@@ -34,6 +36,8 @@ interface Props {
 const {
   title,
   description,
+  cover,
+  coverAlt,
   category,
   tags,
   pubDate,
@@ -49,6 +53,11 @@ const base = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
 const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
+const coverUrl = cover
+  ? /^https?:\/\//.test(cover)
+    ? cover
+    : `${base}${cover.replace(/^\//, "")}`
+  : undefined;
 const formattedDate = new Intl.DateTimeFormat("zh-CN", {
   year: "numeric",
   month: "long",
@@ -88,6 +97,14 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
       }
       <button class="copy-link" type="button" data-copy-link>复制链接</button>
     </header>
+    {
+      coverUrl && (
+        <figure class="post-cover">
+          <img src={coverUrl} alt={coverAlt ?? ""} />
+          {coverAlt && <figcaption>{coverAlt}</figcaption>}
+        </figure>
+      )
+    }
     {
       toc.length > 1 && (
         <nav class="toc" aria-labelledby="toc-title">
