@@ -1,0 +1,43 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("posts"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const groups = posts.reduce<Record<string, typeof posts>>((archive, post) => {
+  const year = String(post.data.pubDate.getFullYear());
+  archive[year] = archive[year] || [];
+  archive[year].push(post);
+  return archive;
+}, {});
+---
+
+<BaseLayout title="归档" description="按年份浏览博客文章。">
+  <section class="page">
+    <p class="eyebrow">Archive</p>
+    <h1>文章归档</h1>
+    <p>按年份整理所有公开文章。</p>
+  </section>
+
+  <section class="archive-list" aria-label="文章归档列表">
+    {Object.entries(groups).map(([year, yearPosts]) => (
+      <section class="archive-year">
+        <h2>{year}</h2>
+        <ul>
+          {yearPosts.map((post) => (
+            <li>
+              <time datetime={post.data.pubDate.toISOString()}>
+                {post.data.pubDate.toLocaleDateString("zh-CN")}
+              </time>
+              <a href={`${base}posts/${post.slug}/`}>{post.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </section>
+</BaseLayout>

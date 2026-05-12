@@ -11,6 +11,12 @@ const base = import.meta.env.BASE_URL.endsWith("/")
 
 const categories = [...new Set(posts.map((post) => post.data.category))];
 const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+function getReadingTime(body: string) {
+  const words = body.trim().split(/\s+/).filter(Boolean).length;
+  const characters = body.replace(/\s/g, "").length;
+  return Math.max(1, Math.ceil(Math.max(words / 220, characters / 500)));
+}
 ---
 
 <BaseLayout title="首页">
@@ -52,7 +58,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
               <a href={`${base}posts/${post.slug}/`}>
                 <span>{post.data.title}</span>
                 <time datetime={post.data.pubDate.toISOString()}>
-                  {post.data.pubDate.toLocaleDateString("zh-CN")}
+                  {post.data.pubDate.toLocaleDateString("zh-CN")} / {getReadingTime(post.body)} 分钟
                 </time>
               </a>
               <a

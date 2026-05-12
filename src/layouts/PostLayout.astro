@@ -7,6 +7,15 @@ interface Props {
   category: string;
   tags: string[];
   pubDate: Date;
+  readingTime: number;
+  previousPost?: {
+    title: string;
+    url: string;
+  };
+  nextPost?: {
+    title: string;
+    url: string;
+  };
   headings: Array<{
     depth: number;
     slug: string;
@@ -14,7 +23,17 @@ interface Props {
   }>;
 }
 
-const { title, description, category, tags, pubDate, headings } = Astro.props;
+const {
+  title,
+  description,
+  category,
+  tags,
+  pubDate,
+  readingTime,
+  previousPost,
+  nextPost,
+  headings
+} = Astro.props;
 const base = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
@@ -39,6 +58,8 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
         <a href={`${base}categories/${encodeURIComponent(category)}/`}>{category}</a>
         <span aria-hidden="true">/</span>
         <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+        <span aria-hidden="true">/</span>
+        <span>{readingTime} 分钟阅读</span>
       </p>
       <h1>{title}</h1>
       <p class="post-description">{description}</p>
@@ -69,5 +90,27 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
     <div class="post-content">
       <slot />
     </div>
+    {
+      (previousPost || nextPost) && (
+        <nav class="post-neighbors" aria-label="相邻文章">
+          {previousPost ? (
+            <a href={previousPost.url}>
+              <span>上一篇</span>
+              {previousPost.title}
+            </a>
+          ) : (
+            <span />
+          )}
+          {nextPost ? (
+            <a href={nextPost.url}>
+              <span>下一篇</span>
+              {nextPost.title}
+            </a>
+          ) : (
+            <span />
+          )}
+        </nav>
+      )
+    }
   </article>
 </BaseLayout>

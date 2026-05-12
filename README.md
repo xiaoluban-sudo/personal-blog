@@ -69,3 +69,12 @@ https://xiaoluban-sudo.github.io/personal-blog/search/
 ## 文章目录
 
 文章页会根据 Markdown 标题自动生成目录。
+
+## 阅读体验
+
+站点还包含这些阅读功能：
+
+- 阅读时间估算
+- 上一篇 / 下一篇
+- 文章归档页
+- 自定义 404 页面
