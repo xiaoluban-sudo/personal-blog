@@ -50,3 +50,4 @@ https://xiaoluban-sudo.github.io/personal-blog/sitemap-index.xml
 - Open Graph
 - Twitter card
 - RSS 自动发现链接
+- `robots.txt`
