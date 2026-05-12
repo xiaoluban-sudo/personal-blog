@@ -16,11 +16,17 @@ const searchIndex = posts.map((post) => ({
   tags: post.data.tags,
   date: post.data.pubDate.toLocaleDateString("zh-CN"),
   url: `${base}posts/${post.slug}/`,
+  body: post.body
+    .replace(/^---[\s\S]*?---/, "")
+    .replace(/[`*_#[\]()]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim(),
   text: [
     post.data.title,
     post.data.description,
     post.data.category,
-    ...post.data.tags
+    ...post.data.tags,
+    post.body
   ]
     .join(" ")
     .toLowerCase()
@@ -37,7 +43,7 @@ const searchIndex = posts.map((post) => ({
         id="search-input"
         type="search"
         autocomplete="off"
-        placeholder="搜索标题、简介、分类或标签"
+        placeholder="搜索标题、正文、简介、分类或标签"
       />
     </label>
     <p id="search-count" class="search-count"></p>
@@ -59,6 +65,7 @@ const searchIndex = posts.map((post) => ({
      *   tags: string[];
      *   date: string;
      *   url: string;
+     *   body: string;
      *   text: string;
      * }} SearchPost
      */
@@ -105,6 +112,7 @@ const searchIndex = posts.map((post) => ({
           const tags = post.tags
             .map((tag) => `<span>#${escapeHtml(tag)}</span>`)
             .join("");
+          const snippet = getSnippet(post, query);
 
           return `<li>
             <a href="${post.url}">
@@ -114,10 +122,35 @@ const searchIndex = posts.map((post) => ({
             <div class="search-meta">
               <span>${escapeHtml(post.category)}</span>${tags}
             </div>
-            <p>${escapeHtml(post.description)}</p>
+            <p>${escapeHtml(snippet || post.description)}</p>
           </li>`;
         })
         .join("");
+    }
+
+    function getSnippet(post, query) {
+      if (!query) {
+        return "";
+      }
+
+      const keywords = query.split(/\s+/).filter(Boolean);
+      const text = post.body || post.description;
+      const lowerText = text.toLowerCase();
+      const position = keywords
+        .map((keyword) => lowerText.indexOf(keyword))
+        .filter((index) => index >= 0)
+        .sort((a, b) => a - b)[0];
+
+      if (position === undefined) {
+        return post.description;
+      }
+
+      const start = Math.max(0, position - 28);
+      const end = Math.min(text.length, position + 72);
+      const prefix = start > 0 ? "..." : "";
+      const suffix = end < text.length ? "..." : "";
+
+      return `${prefix}${text.slice(start, end)}${suffix}`;
     }
 
     function search() {

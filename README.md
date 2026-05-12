@@ -60,6 +60,8 @@ https://xiaoluban-sudo.github.io/personal-blog/sitemap-index.xml
 https://xiaoluban-sudo.github.io/personal-blog/search/
 ```
 
+搜索范围包括文章标题、正文、简介、分类和标签。
+
 ## 暗色模式
 
 站点支持亮色 / 暗色模式切换，并会记住当前浏览器里的选择。
