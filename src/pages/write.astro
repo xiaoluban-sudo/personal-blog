@@ -55,6 +55,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         </label>
         <label class="write-editor">
           <span>正文</span>
+          <div class="markdown-toolbar" aria-label="Markdown 快捷插入">
+            <button type="button" data-insert-markdown="heading">标题</button>
+            <button type="button" data-insert-markdown="bold">加粗</button>
+            <button type="button" data-insert-markdown="link">链接</button>
+            <button type="button" data-insert-markdown="image">图片</button>
+            <button type="button" data-insert-markdown="quote">引用</button>
+            <button type="button" data-insert-markdown="code">代码块</button>
+            <button type="button" data-insert-markdown="table">表格</button>
+          </div>
           <textarea name="body" spellcheck="false">## 小标题
 
 从这里开始写正文。
@@ -76,6 +85,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <summary>生成的 Markdown</summary>
           <pre><code data-output></code></pre>
         </details>
+        <details class="markdown-help" open>
+          <summary>Markdown 速查</summary>
+          <div class="markdown-help-grid">
+            <code>## 二级标题</code>
+            <code>**加粗**</code>
+            <code>*斜体*</code>
+            <code>- 无序列表</code>
+            <code>1. 有序列表</code>
+            <code>[链接](https://example.com)</code>
+            <code>![图片描述](/images/example.png)</code>
+            <code>&gt; 引用</code>
+            <code>`行内代码`</code>
+            <code>```js<br />console.log("hello");<br />```</code>
+            <code>---</code>
+            <code>| 名称 | 说明 |<br />| --- | --- |</code>
+          </div>
+        </details>
       </aside>
     </div>
   </section>
@@ -90,6 +116,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     const copyButton = document.querySelector("[data-copy-post]");
     const resetButton = document.querySelector("[data-reset-draft]");
     const status = document.querySelector("[data-copy-status]");
+    const markdownButtons = document.querySelectorAll("[data-insert-markdown]");
     const storageKey = "personal-blog-write-draft";
 
     if (
@@ -135,6 +162,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     function setDraftValue(value) {
       if (fields.draft instanceof HTMLInputElement) fields.draft.checked = value;
+    }
+
+    function getBodyField() {
+      return fields.body instanceof HTMLTextAreaElement ? fields.body : undefined;
     }
 
     function today() {
@@ -232,7 +263,42 @@ ${getValue("body") || "从这里开始写正文。"}`;
       saveDraft();
     }
 
+    const snippets = {
+      heading: "## 小标题\n\n",
+      bold: "**加粗文字**",
+      link: "[链接文字](https://example.com)",
+      image: "![图片描述](/images/example.png)",
+      quote: "> 这里写引用内容\n\n",
+      code: "```js\nconsole.log(\"hello\");\n```\n\n",
+      table: "| 名称 | 说明 |\n| --- | --- |\n| Astro | 静态站点框架 |\n\n"
+    };
+
+    function insertMarkdown(type) {
+      const bodyField = getBodyField();
+      const snippet = snippets[type];
+
+      if (!bodyField || !snippet) return;
+
+      const start = bodyField.selectionStart;
+      const end = bodyField.selectionEnd;
+      const before = bodyField.value.slice(0, start);
+      const after = bodyField.value.slice(end);
+      bodyField.value = `${before}${snippet}${after}`;
+      bodyField.focus();
+      bodyField.selectionStart = start + snippet.length;
+      bodyField.selectionEnd = start + snippet.length;
+      render();
+    }
+
     form.addEventListener("input", render);
+
+    markdownButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button instanceof HTMLButtonElement) {
+          insertMarkdown(button.dataset.insertMarkdown);
+        }
+      });
+    });
 
     copyButton.addEventListener("click", async () => {
       await navigator.clipboard.writeText(buildMarkdown());

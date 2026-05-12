@@ -851,6 +851,29 @@ h2 {
   resize: vertical;
 }
 
+.markdown-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.markdown-toolbar button {
+  min-height: 32px;
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.markdown-toolbar button:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
 .write-form input:focus,
 .write-form textarea:focus {
   border-color: var(--accent);
@@ -910,7 +933,8 @@ h2 {
   padding-top: 14px;
 }
 
-.write-output summary {
+.write-output summary,
+.markdown-help summary {
   color: var(--muted);
   cursor: pointer;
 }
@@ -928,6 +952,31 @@ h2 {
   color: var(--text);
   font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
   font-size: 14px;
+}
+
+.markdown-help {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.markdown-help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.markdown-help code {
+  display: block;
+  min-height: 42px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--code-text);
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  background: var(--code-bg);
 }
 
 @media (max-width: 640px) {
