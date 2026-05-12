@@ -9,6 +9,7 @@ interface Props {
   pubDate: Date;
   readingTime: number;
   wordCount: number;
+  draft: boolean;
   previousPost?: {
     title: string;
     url: string;
@@ -32,6 +33,7 @@ const {
   pubDate,
   readingTime,
   wordCount,
+  draft,
   previousPost,
   nextPost,
   headings
@@ -65,6 +67,7 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
         <span aria-hidden="true">/</span>
         <span>约 {wordCount} 字</span>
       </p>
+      {draft && <span class="draft-badge">草稿预览</span>}
       <h1>{title}</h1>
       <p class="post-description">{description}</p>
       {

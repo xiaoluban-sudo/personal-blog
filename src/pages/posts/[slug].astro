@@ -1,11 +1,12 @@
 ---
 import { getCollection, render } from "astro:content";
 import PostLayout from "../../layouts/PostLayout.astro";
+import { showDrafts } from "../../lib/posts";
 
 export async function getStaticPaths() {
-  const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
+  const posts = (await getCollection("posts"))
+    .filter((post) => showDrafts || !post.data.draft)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   const base = import.meta.env.BASE_URL.endsWith("/")
     ? import.meta.env.BASE_URL
     : `${import.meta.env.BASE_URL}/`;
@@ -52,6 +53,7 @@ function getWordCount(body: string) {
   pubDate={post.data.pubDate}
   readingTime={getReadingTime(post.body)}
   wordCount={getWordCount(post.body)}
+  draft={post.data.draft}
   previousPost={previousPost}
   nextPost={nextPost}
   headings={headings}

@@ -1,10 +1,8 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getVisiblePosts, showDrafts } from "../lib/posts";
 
-const posts = (await getCollection("posts"))
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = await getVisiblePosts();
 const base = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
@@ -56,7 +54,7 @@ function getReadingTime(body: string) {
           {posts.map((post) => (
             <li>
               <a href={`${base}posts/${post.slug}/`}>
-                <span>{post.data.title}</span>
+                <span>{post.data.title}{post.data.draft && "（草稿）"}</span>
                 <time datetime={post.data.pubDate.toISOString()}>
                   {post.data.pubDate.toLocaleDateString("zh-CN")} / {getReadingTime(post.body)} 分钟
                 </time>
@@ -76,6 +74,7 @@ function getReadingTime(body: string) {
                   </nav>
                 )
               }
+              {post.data.draft && <span class="draft-badge">草稿</span>}
               <p>{post.data.description}</p>
             </li>
           ))}
@@ -84,5 +83,6 @@ function getReadingTime(body: string) {
         <p>还没有文章。</p>
       )
     }
+    {showDrafts && <p class="draft-note">本地开发模式正在显示草稿文章，生产构建会自动隐藏。</p>}
   </section>
 </BaseLayout>

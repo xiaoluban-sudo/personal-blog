@@ -281,6 +281,26 @@ h2 {
   margin-top: 10px;
 }
 
+.draft-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 28px;
+  margin-top: 10px;
+  padding: 2px 9px;
+  border: 1px dashed var(--accent);
+  border-radius: 999px;
+  color: var(--accent-strong);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.draft-note {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
 .home-tags {
   margin-top: 12px;
 }

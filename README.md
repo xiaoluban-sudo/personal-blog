@@ -25,6 +25,10 @@ pnpm new:post "我的第二篇文章" --category 技术 --tags Astro,部署 --de
 - `--draft`：创建为草稿
 - `--dry-run`：只预览将要生成的文件路径
 
+## 草稿预览
+
+本地开发模式会显示 `draft: true` 的草稿文章，并带草稿标识；生产构建会自动隐藏草稿。
+
 ## RSS
 
 订阅地址：

@@ -1,10 +1,8 @@
 import rss from "@astrojs/rss";
-import { getCollection } from "astro:content";
+import { getVisiblePosts } from "../lib/posts";
 
 export async function GET(context) {
-  const posts = (await getCollection("posts", ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-  );
+  const posts = await getVisiblePosts();
   const base = import.meta.env.BASE_URL.endsWith("/")
     ? import.meta.env.BASE_URL
     : `${import.meta.env.BASE_URL}/`;
