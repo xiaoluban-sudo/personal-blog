@@ -15,6 +15,33 @@ export async function getStaticPaths() {
     params: { slug: post.slug },
     props: {
       post,
+      relatedPosts: posts
+        .filter((candidate) => candidate.slug !== post.slug)
+        .map((candidate) => {
+          const sharedTags = candidate.data.tags.filter((tag) =>
+            post.data.tags.includes(tag)
+          ).length;
+          const score =
+            (candidate.data.category === post.data.category ? 3 : 0) +
+            sharedTags * 2;
+
+          return { candidate, score };
+        })
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return (
+            b.candidate.data.pubDate.valueOf() -
+            a.candidate.data.pubDate.valueOf()
+          );
+        })
+        .slice(0, 3)
+        .map(({ candidate }) => ({
+          title: candidate.data.title,
+          description: candidate.data.description,
+          category: candidate.data.category,
+          url: `${base}posts/${candidate.slug}/`
+        })),
       previousPost: posts[index + 1]
         ? {
             title: posts[index + 1].data.title,
@@ -31,7 +58,7 @@ export async function getStaticPaths() {
   }));
 }
 
-const { post, previousPost, nextPost } = Astro.props;
+const { post, relatedPosts, previousPost, nextPost } = Astro.props;
 const { Content, headings } = await render(post);
 
 function getReadingTime(body: string) {
@@ -54,6 +81,7 @@ function getWordCount(body: string) {
   readingTime={getReadingTime(post.body)}
   wordCount={getWordCount(post.body)}
   draft={post.data.draft}
+  relatedPosts={relatedPosts}
   previousPost={previousPost}
   nextPost={nextPost}
   headings={headings}

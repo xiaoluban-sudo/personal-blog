@@ -511,6 +511,52 @@ h2 {
   border-radius: 8px;
 }
 
+.related-posts {
+  display: grid;
+  gap: 14px;
+  margin-top: 42px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.related-posts h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.related-post-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.related-post-list a {
+  display: grid;
+  gap: 8px;
+  min-height: 128px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-decoration: none;
+  background: var(--surface);
+}
+
+.related-post-list span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.related-post-list strong {
+  line-height: 1.4;
+}
+
+.related-post-list p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 .post-neighbors {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

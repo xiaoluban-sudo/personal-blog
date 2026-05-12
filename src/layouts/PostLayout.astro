@@ -10,6 +10,12 @@ interface Props {
   readingTime: number;
   wordCount: number;
   draft: boolean;
+  relatedPosts?: Array<{
+    title: string;
+    description: string;
+    category: string;
+    url: string;
+  }>;
   previousPost?: {
     title: string;
     url: string;
@@ -34,6 +40,7 @@ const {
   readingTime,
   wordCount,
   draft,
+  relatedPosts = [],
   previousPost,
   nextPost,
   headings
@@ -98,6 +105,22 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
     <div class="post-content">
       <slot />
     </div>
+    {
+      relatedPosts.length > 0 && (
+        <section class="related-posts" aria-labelledby="related-posts-title">
+          <h2 id="related-posts-title">相关文章</h2>
+          <div class="related-post-list">
+            {relatedPosts.map((relatedPost) => (
+              <a href={relatedPost.url}>
+                <span>{relatedPost.category}</span>
+                <strong>{relatedPost.title}</strong>
+                <p>{relatedPost.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
     {
       (previousPost || nextPost) && (
         <nav class="post-neighbors" aria-label="相邻文章">
