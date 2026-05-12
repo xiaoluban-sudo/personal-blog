@@ -82,6 +82,24 @@ nav a {
   text-decoration: none;
 }
 
+.menu-toggle {
+  display: none;
+  min-height: 38px;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.menu-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
 .theme-toggle {
   display: inline-grid;
   place-items: center;
@@ -633,17 +651,42 @@ h2 {
 
 @media (max-width: 640px) {
   .site-header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
+    position: relative;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px 12px;
     width: min(100% - 28px, 920px);
     padding: 22px 0;
   }
 
+  .brand {
+    margin-right: auto;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  #site-nav {
+    display: none;
+    flex: 1 0 100%;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding-top: 10px;
+  }
+
+  #site-nav[data-open="true"] {
+    display: flex;
+  }
+
+  #site-nav a {
+    min-height: 34px;
+  }
+
   .theme-toggle {
-    position: absolute;
-    top: 18px;
-    right: 14px;
+    position: static;
   }
 
   main {

@@ -59,7 +59,15 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
   <body>
     <header class="site-header">
       <a class="brand" href={base}>我的博客</a>
-      <nav aria-label="主导航">
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+      >
+        菜单
+      </button>
+      <nav id="site-nav" aria-label="主导航">
         <a href={base}>文章</a>
         <a href={`${base}search/`}>搜索</a>
         <a href={`${base}archive/`}>归档</a>
@@ -80,6 +88,8 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
       const button = document.querySelector(".theme-toggle");
       const icon = document.querySelector("[data-theme-icon]");
       const backToTop = document.querySelector(".back-to-top");
+      const menuButton = document.querySelector(".menu-toggle");
+      const siteNav = document.querySelector("#site-nav");
 
       function syncThemeIcon() {
         const isDark = document.documentElement.dataset.theme === "dark";
@@ -106,6 +116,19 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
 
       window.addEventListener("scroll", syncBackToTop, { passive: true });
       syncBackToTop();
+
+      menuButton.addEventListener("click", () => {
+        const isOpen = menuButton.getAttribute("aria-expanded") === "true";
+        menuButton.setAttribute("aria-expanded", String(!isOpen));
+        siteNav.dataset.open = String(!isOpen);
+      });
+
+      siteNav.addEventListener("click", (event) => {
+        if (event.target instanceof HTMLAnchorElement) {
+          menuButton.setAttribute("aria-expanded", "false");
+          siteNav.dataset.open = "false";
+        }
+      });
     </script>
   </body>
 </html>

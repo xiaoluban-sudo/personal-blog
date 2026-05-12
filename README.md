@@ -93,3 +93,7 @@ https://xiaoluban-sudo.github.io/personal-blog/search/
 - 表格
 - 分割线
 - 图片
+
+## 移动端导航
+
+小屏幕下顶部导航会折叠成菜单按钮，避免链接过多时挤在一起。
