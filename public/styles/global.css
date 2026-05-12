@@ -9,6 +9,17 @@
   --surface: #ffffff;
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #151718;
+  --text: #ece8df;
+  --muted: #b5aea2;
+  --line: #343331;
+  --accent: #72b8a7;
+  --accent-strong: #a3d8cc;
+  --surface: #1f2223;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -65,6 +76,31 @@ nav {
 
 nav a {
   text-decoration: none;
+}
+
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--text);
+  font: inherit;
+  line-height: 1;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  outline-offset: 3px;
 }
 
 .category-nav {
@@ -319,6 +355,12 @@ h2 {
     gap: 10px;
     width: min(100% - 28px, 920px);
     padding: 22px 0;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: 18px;
+    right: 14px;
   }
 
   main {

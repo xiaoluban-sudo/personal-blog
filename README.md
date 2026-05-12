@@ -59,3 +59,7 @@ https://xiaoluban-sudo.github.io/personal-blog/sitemap-index.xml
 ```text
 https://xiaoluban-sudo.github.io/personal-blog/search/
 ```
+
+## 暗色模式
+
+站点支持亮色 / 暗色模式切换，并会记住当前浏览器里的选择。
