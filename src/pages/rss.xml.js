@@ -1,5 +1,6 @@
 import rss from "@astrojs/rss";
 import { getVisiblePosts } from "../lib/posts";
+import { siteConfig } from "../site.config";
 
 export async function GET(context) {
   const posts = await getVisiblePosts();
@@ -9,8 +10,8 @@ export async function GET(context) {
   const site = new URL(base, context.site);
 
   return rss({
-    title: "我的博客",
-    description: "记录想法、代码和一路迭代的过程。",
+    title: siteConfig.name,
+    description: siteConfig.rss.description,
     site,
     items: posts.map((post) => ({
       title: post.data.title,

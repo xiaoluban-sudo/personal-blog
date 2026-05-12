@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getVisiblePosts, showDrafts } from "../lib/posts";
+import { siteConfig } from "../site.config";
 
 const posts = await getVisiblePosts();
 const base = import.meta.env.BASE_URL.endsWith("/")
@@ -24,11 +25,9 @@ function getReadingTime(body: string) {
 
 <BaseLayout title="首页">
   <section class="intro">
-    <p class="eyebrow">Personal Blog</p>
-    <h1>记录想法、代码和一路迭代的过程。</h1>
-    <p>
-      这里会放我的文章、项目笔记，以及这个博客从第一版慢慢长出来的每一步。
-    </p>
+    <p class="eyebrow">{siteConfig.heroEyebrow}</p>
+    <h1>{siteConfig.heroTitle}</h1>
+    <p>{siteConfig.heroDescription}</p>
   </section>
 
   <section class="post-list" aria-labelledby="posts-title">

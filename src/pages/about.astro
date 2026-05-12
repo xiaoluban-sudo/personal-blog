@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../site.config";
 ---
 
 <BaseLayout title="关于" description="关于这个博客和它的作者。">
   <section class="page">
     <h1>关于</h1>
+    <p class="eyebrow">{siteConfig.author.name}</p>
     <p>
       你好，这里是我的个人博客。我会在这里记录学习、项目、生活里的观察，以及这个博客本身的迭代过程。
     </p>

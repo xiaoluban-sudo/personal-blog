@@ -1,4 +1,6 @@
 ---
+import { siteConfig } from "../site.config";
+
 interface Props {
   title: string;
   description?: string;
@@ -9,16 +11,20 @@ interface Props {
 
 const {
   title,
-  description = "一个从零开始慢慢生长的个人博客。",
+  description = siteConfig.description,
   ogType = "website",
   publishedTime,
   tags = []
 } = Astro.props;
-const pageTitle = title === "首页" ? "我的博客" : `${title} - 我的博客`;
+const pageTitle = title === "首页" ? siteConfig.name : `${title} - ${siteConfig.name}`;
 const base = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
 const rssUrl = `${base}rss.xml`;
+const navItems = siteConfig.navItems.map((item) => ({
+  ...item,
+  href: item.href === "/" ? base : `${base}${item.href.replace(/^\//, "")}`
+}));
 const canonicalPath =
   Astro.url.pathname.endsWith("/") || Astro.url.pathname.includes(".")
     ? Astro.url.pathname
@@ -36,8 +42,8 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
     <meta name="theme-color" content="#fbfaf7" />
     <title>{pageTitle}</title>
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="alternate" type="application/rss+xml" title="我的博客 RSS" href={rssUrl} />
-    <meta property="og:site_name" content="我的博客" />
+    <link rel="alternate" type="application/rss+xml" title={siteConfig.rss.title} href={rssUrl} />
+    <meta property="og:site_name" content={siteConfig.name} />
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -58,7 +64,7 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href={base}>我的博客</a>
+      <a class="brand" href={base}>{siteConfig.name}</a>
       <button
         class="menu-toggle"
         type="button"
@@ -68,13 +74,7 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
         菜单
       </button>
       <nav id="site-nav" aria-label="主导航">
-        <a href={base}>文章</a>
-        <a href={`${base}search/`}>搜索</a>
-        <a href={`${base}archive/`}>归档</a>
-        <a href={`${base}categories/`}>分类</a>
-        <a href={`${base}tags/`}>标签</a>
-        <a href={`${base}about/`}>关于</a>
-        <a href={rssUrl}>RSS</a>
+        {navItems.map((item) => <a href={item.href}>{item.label}</a>)}
       </nav>
       <button class="theme-toggle" type="button" aria-label="切换暗色模式">
         <span aria-hidden="true" data-theme-icon>☾</span>
