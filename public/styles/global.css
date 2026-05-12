@@ -262,6 +262,56 @@ h2 {
   margin: 18px 0;
 }
 
+.search-page {
+  max-width: 760px;
+}
+
+.search-box {
+  display: grid;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.search-box span,
+.search-count {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.search-box input {
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  background: var(--surface);
+}
+
+.search-box input:focus {
+  border-color: var(--accent);
+  outline: 3px solid color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.search-count {
+  min-height: 26px;
+  margin: 12px 0 0;
+}
+
+.search-results {
+  margin-top: 36px;
+}
+
+.search-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 @media (max-width: 640px) {
   .site-header {
     align-items: flex-start;

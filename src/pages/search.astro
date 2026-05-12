@@ -1,0 +1,136 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("posts"))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
+const searchIndex = posts.map((post) => ({
+  title: post.data.title,
+  description: post.data.description,
+  category: post.data.category,
+  tags: post.data.tags,
+  date: post.data.pubDate.toLocaleDateString("zh-CN"),
+  url: `${base}posts/${post.slug}/`,
+  text: [
+    post.data.title,
+    post.data.description,
+    post.data.category,
+    ...post.data.tags
+  ]
+    .join(" ")
+    .toLowerCase()
+}));
+---
+
+<BaseLayout title="搜索" description="搜索博客文章。">
+  <section class="page search-page">
+    <p class="eyebrow">Search</p>
+    <h1>搜索文章</h1>
+    <label class="search-box">
+      <span>关键词</span>
+      <input
+        id="search-input"
+        type="search"
+        autocomplete="off"
+        placeholder="搜索标题、简介、分类或标签"
+      />
+    </label>
+    <p id="search-count" class="search-count"></p>
+  </section>
+
+  <section class="post-list search-results" aria-labelledby="search-results-title">
+    <h2 id="search-results-title">结果</h2>
+    <ul id="search-results-list"></ul>
+  </section>
+
+  <script id="search-index" type="application/json" is:inline set:html={JSON.stringify(searchIndex)} />
+  <script is:inline>
+    // @ts-nocheck
+    /**
+     * @typedef {{
+     *   title: string;
+     *   description: string;
+     *   category: string;
+     *   tags: string[];
+     *   date: string;
+     *   url: string;
+     *   text: string;
+     * }} SearchPost
+     */
+
+    const input = document.querySelector("#search-input");
+    const count = document.querySelector("#search-count");
+    const list = document.querySelector("#search-results-list");
+    const dataNode = document.querySelector("#search-index");
+
+    if (!(input instanceof HTMLInputElement) || !count || !list || !dataNode) {
+      throw new Error("Search page is missing required elements.");
+    }
+
+    /** @type {SearchPost[]} */
+    const posts = JSON.parse(dataNode.textContent || "[]");
+
+    /** @param {string} value */
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, (character) => {
+        /** @type {Record<string, string>} */
+        const entities = {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        };
+
+        return entities[character];
+      });
+    }
+
+    /**
+     * @param {SearchPost[]} results
+     * @param {string} query
+     */
+    function render(results, query) {
+      count.textContent = query
+        ? `找到 ${results.length} 篇文章`
+        : `共有 ${posts.length} 篇文章`;
+
+      list.innerHTML = results
+        .map((post) => {
+          const tags = post.tags
+            .map((tag) => `<span>#${escapeHtml(tag)}</span>`)
+            .join("");
+
+          return `<li>
+            <a href="${post.url}">
+              <span>${escapeHtml(post.title)}</span>
+              <time>${escapeHtml(post.date)}</time>
+            </a>
+            <div class="search-meta">
+              <span>${escapeHtml(post.category)}</span>${tags}
+            </div>
+            <p>${escapeHtml(post.description)}</p>
+          </li>`;
+        })
+        .join("");
+    }
+
+    function search() {
+      const query = input.value.trim().toLowerCase();
+      const keywords = query.split(/\s+/).filter(Boolean);
+      const results = keywords.length
+        ? posts.filter((post) => keywords.every((keyword) => post.text.includes(keyword)))
+        : posts;
+
+      render(results, query);
+    }
+
+    input.addEventListener("input", search);
+    render(posts, "");
+  </script>
+</BaseLayout>

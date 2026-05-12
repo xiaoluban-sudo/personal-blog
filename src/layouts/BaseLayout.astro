@@ -55,6 +55,7 @@ const canonicalUrl = new URL(canonicalPath, Astro.site).toString();
       <a class="brand" href={base}>我的博客</a>
       <nav aria-label="主导航">
         <a href={base}>文章</a>
+        <a href={`${base}search/`}>搜索</a>
         <a href={`${base}about/`}>关于</a>
         <a href={rssUrl}>RSS</a>
       </nav>

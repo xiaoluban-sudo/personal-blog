@@ -51,3 +51,11 @@ https://xiaoluban-sudo.github.io/personal-blog/sitemap-index.xml
 - Twitter card
 - RSS 自动发现链接
 - `robots.txt`
+
+## 搜索
+
+站内搜索页面：
+
+```text
+https://xiaoluban-sudo.github.io/personal-blog/search/
+```
