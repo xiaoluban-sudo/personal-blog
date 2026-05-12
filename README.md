@@ -65,3 +65,7 @@ https://xiaoluban-sudo.github.io/personal-blog/search/
 ## 暗色模式
 
 站点支持亮色 / 暗色模式切换，并会记住当前浏览器里的选择。
+
+## 文章目录
+
+文章页会根据 Markdown 标题自动生成目录。

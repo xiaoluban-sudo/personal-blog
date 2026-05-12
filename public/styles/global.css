@@ -289,6 +289,38 @@ h2 {
   margin-top: 18px;
 }
 
+.toc {
+  margin-top: 30px;
+  padding: 18px 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.toc h2 {
+  font-size: 18px;
+}
+
+.toc ol {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 12px 0 0;
+  list-style: none;
+}
+
+.toc a {
+  color: var(--muted);
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.toc a:hover {
+  color: var(--accent-strong);
+}
+
+.toc-depth-3 {
+  padding-left: 18px;
+}
+
 .post-content {
   padding-top: 26px;
 }
