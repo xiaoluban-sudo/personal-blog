@@ -822,6 +822,26 @@ h2 {
   gap: 7px;
 }
 
+.write-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 88%, var(--accent) 12%);
+}
+
+.write-panel h2 {
+  font-size: 18px;
+}
+
+.write-panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
 .write-form label span,
 .write-preview-toolbar p {
   color: var(--muted);
@@ -836,6 +856,11 @@ h2 {
   color: var(--text);
   font: inherit;
   background: var(--surface);
+}
+
+.write-form input[type="file"] {
+  min-height: auto;
+  padding: 10px;
 }
 
 .write-form input {
@@ -902,6 +927,42 @@ h2 {
   min-height: 18px;
 }
 
+.image-helper-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.image-helper-actions code {
+  overflow-x: auto;
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--code-text);
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  white-space: nowrap;
+  background: var(--code-bg);
+}
+
+.image-helper-actions button {
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--accent-strong);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.image-helper-actions button:hover {
+  border-color: var(--accent);
+}
+
 .write-preview {
   min-width: 0;
   padding: 20px;
@@ -957,6 +1018,31 @@ h2 {
 .markdown-help {
   border-top: 1px solid var(--line);
   padding-top: 14px;
+}
+
+.draft-help {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.draft-help summary {
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.draft-help ul {
+  display: grid;
+  gap: 8px;
+  padding-left: 22px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.draft-help code {
+  color: var(--code-text);
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  background: var(--code-bg);
 }
 
 .markdown-help-grid {
@@ -1047,6 +1133,10 @@ h2 {
 
   .write-form {
     position: static;
+  }
+
+  .image-helper-actions {
+    grid-template-columns: 1fr;
   }
 
   .post-neighbors a:last-child {

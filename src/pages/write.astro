@@ -11,12 +11,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </div>
       <div class="write-actions">
         <button type="button" data-copy-post>复制全文</button>
+        <button type="button" data-download-post>下载 Markdown</button>
         <button type="button" data-reset-draft>清空</button>
       </div>
     </header>
 
     <div class="write-shell">
       <form class="write-form" data-write-form>
+        <section class="write-panel" aria-labelledby="import-title">
+          <h2 id="import-title">导入文章</h2>
+          <label>
+            <span>选择 .md 文件继续编辑</span>
+            <input data-import-post type="file" accept=".md,text/markdown,text/plain" />
+          </label>
+        </section>
+
         <label>
           <span>标题</span>
           <input name="title" type="text" value="新的博客文章" />
@@ -53,6 +62,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <span>封面描述</span>
           <input name="coverAlt" type="text" placeholder="描述这张封面图" />
         </label>
+        <section class="write-panel" aria-labelledby="image-helper-title">
+          <h2 id="image-helper-title">图片路径辅助</h2>
+          <label>
+            <span>选择图片文件名</span>
+            <input data-image-file type="file" accept="image/*" />
+          </label>
+          <div class="write-fields">
+            <label>
+              <span>图片目录</span>
+              <input data-image-folder type="text" value="/images/posts/" />
+            </label>
+            <label>
+              <span>图片描述</span>
+              <input data-image-alt type="text" placeholder="图片说明" />
+            </label>
+          </div>
+          <div class="image-helper-actions">
+            <code data-image-path>/images/posts/example.png</code>
+            <button type="button" data-insert-image-path>插入图片语法</button>
+          </div>
+          <p>
+            静态站不会直接上传图片。把图片放进项目的
+            <code>public/images/posts/</code> 后，再使用这里生成的路径。
+          </p>
+        </section>
         <label class="write-editor">
           <span>正文</span>
           <div class="markdown-toolbar" aria-label="Markdown 快捷插入">
@@ -102,6 +136,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             <code>| 名称 | 说明 |<br />| --- | --- |</code>
           </div>
         </details>
+        <details class="draft-help" open>
+          <summary>草稿管理说明</summary>
+          <ul>
+            <li>工作台内容会自动保存在当前浏览器的本地存储里。</li>
+            <li>刷新页面不会丢内容；换浏览器或换电脑不会同步。</li>
+            <li>下载的 `.md` 文件放进 <code>src/content/posts/</code> 后，就能进入博客内容流。</li>
+            <li>勾选“保存为草稿”会生成 <code>draft: true</code>，本地可预览，生产部署会隐藏。</li>
+          </ul>
+        </details>
       </aside>
     </div>
   </section>
@@ -114,9 +157,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     const preview = document.querySelector("[data-preview]");
     const output = document.querySelector("[data-output]");
     const copyButton = document.querySelector("[data-copy-post]");
+    const downloadButton = document.querySelector("[data-download-post]");
     const resetButton = document.querySelector("[data-reset-draft]");
     const status = document.querySelector("[data-copy-status]");
     const markdownButtons = document.querySelectorAll("[data-insert-markdown]");
+    const importInput = document.querySelector("[data-import-post]");
+    const imageFileInput = document.querySelector("[data-image-file]");
+    const imageFolderInput = document.querySelector("[data-image-folder]");
+    const imageAltInput = document.querySelector("[data-image-alt]");
+    const imagePath = document.querySelector("[data-image-path]");
+    const insertImagePathButton = document.querySelector("[data-insert-image-path]");
     const storageKey = "personal-blog-write-draft";
 
     if (
@@ -124,8 +174,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       !(preview instanceof HTMLElement) ||
       !(output instanceof HTMLElement) ||
       !(copyButton instanceof HTMLButtonElement) ||
+      !(downloadButton instanceof HTMLButtonElement) ||
       !(resetButton instanceof HTMLButtonElement) ||
-      !(status instanceof HTMLElement)
+      !(status instanceof HTMLElement) ||
+      !(importInput instanceof HTMLInputElement) ||
+      !(imageFileInput instanceof HTMLInputElement) ||
+      !(imageFolderInput instanceof HTMLInputElement) ||
+      !(imageAltInput instanceof HTMLInputElement) ||
+      !(imagePath instanceof HTMLElement) ||
+      !(insertImagePathButton instanceof HTMLButtonElement)
     ) {
       throw new Error("Write page is missing required elements.");
     }
@@ -176,6 +233,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
     }
 
+    function toSlug(value) {
+      const slug = value
+        .normalize("NFKD")
+        .toLowerCase()
+        .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
+        .replace(/^-+|-+$/g, "");
+
+      return slug || "post";
+    }
+
     function formatTags(value) {
       const tags = value
         .split(",")
@@ -202,6 +269,51 @@ draft: ${getDraftValue()}
 ---
 
 ${getValue("body") || "从这里开始写正文。"}`;
+    }
+
+    function parseYamlValue(value) {
+      const trimmed = value.trim();
+
+      if (trimmed === "true") return true;
+      if (trimmed === "false") return false;
+      if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+        return trimmed
+          .slice(1, -1)
+          .split(",")
+          .map((item) => item.trim().replace(/^["']|["']$/g, ""))
+          .filter(Boolean);
+      }
+
+      return trimmed.replace(/^["']|["']$/g, "");
+    }
+
+    function importMarkdown(markdown) {
+      const match = markdown.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+
+      if (!match) {
+        setValue("body", markdown);
+        render();
+        return;
+      }
+
+      const frontmatter = Object.fromEntries(
+        match[1]
+          .split("\n")
+          .map((line) => line.match(/^([A-Za-z]+):\s*(.*)$/))
+          .filter(Boolean)
+          .map((lineMatch) => [lineMatch[1], parseYamlValue(lineMatch[2])])
+      );
+
+      setValue("title", String(frontmatter.title ?? "新的博客文章"));
+      setValue("description", String(frontmatter.description ?? "这里写一句文章简介。"));
+      setValue("category", String(frontmatter.category ?? "随记"));
+      setValue("tags", Array.isArray(frontmatter.tags) ? frontmatter.tags.join(",") : "");
+      setValue("pubDate", String(frontmatter.pubDate ?? today()));
+      setValue("cover", String(frontmatter.cover ?? ""));
+      setValue("coverAlt", String(frontmatter.coverAlt ?? ""));
+      setDraftValue(Boolean(frontmatter.draft));
+      setValue("body", match[2].trim());
+      render();
     }
 
     function sanitizeHtml(html) {
@@ -263,6 +375,48 @@ ${getValue("body") || "从这里开始写正文。"}`;
       saveDraft();
     }
 
+    function downloadMarkdown() {
+      const markdown = buildMarkdown();
+      const filename = `${toSlug(getValue("title") || "post")}.md`;
+      const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+      status.textContent = `已下载 ${filename}`;
+      window.setTimeout(() => {
+        status.textContent = "";
+      }, 1800);
+    }
+
+    function normalizeFolder(value) {
+      const folder = value.trim() || "/images/posts/";
+      return `/${folder.replace(/^\/+/, "").replace(/\/?$/, "/")}`;
+    }
+
+    function syncImagePath() {
+      const file = imageFileInput.files?.[0];
+      const filename = file?.name || "example.png";
+      imagePath.textContent = `${normalizeFolder(imageFolderInput.value)}${filename}`;
+    }
+
+    function insertImageMarkdown() {
+      const bodyField = getBodyField();
+      if (!bodyField) return;
+
+      const alt = imageAltInput.value.trim() || "图片描述";
+      const snippet = `![${alt}](${imagePath.textContent})`;
+      const start = bodyField.selectionStart;
+      const end = bodyField.selectionEnd;
+      bodyField.value = `${bodyField.value.slice(0, start)}${snippet}${bodyField.value.slice(end)}`;
+      bodyField.focus();
+      bodyField.selectionStart = start + snippet.length;
+      bodyField.selectionEnd = start + snippet.length;
+      render();
+    }
+
     const snippets = {
       heading: "## 小标题\n\n",
       bold: "**加粗文字**",
@@ -308,6 +462,23 @@ ${getValue("body") || "从这里开始写正文。"}`;
       }, 1400);
     });
 
+    downloadButton.addEventListener("click", downloadMarkdown);
+
+    importInput.addEventListener("change", async () => {
+      const file = importInput.files?.[0];
+      if (!file) return;
+
+      importMarkdown(await file.text());
+      status.textContent = `已导入 ${file.name}`;
+      window.setTimeout(() => {
+        status.textContent = "";
+      }, 1800);
+    });
+
+    imageFileInput.addEventListener("change", syncImagePath);
+    imageFolderInput.addEventListener("input", syncImagePath);
+    insertImagePathButton.addEventListener("click", insertImageMarkdown);
+
     resetButton.addEventListener("click", () => {
       localStorage.removeItem(storageKey);
       form.reset();
@@ -319,6 +490,7 @@ ${getValue("body") || "从这里开始写正文。"}`;
     });
 
     loadDraft();
+    syncImagePath();
     render();
   </script>
 </BaseLayout>
