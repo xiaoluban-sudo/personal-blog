@@ -1,0 +1,258 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="写作" description="本地 Markdown 写作工作台。">
+  <section class="write-page" aria-labelledby="write-title">
+    <header class="write-header">
+      <div>
+        <p class="eyebrow">Writing Desk</p>
+        <h1 id="write-title">写作工作台</h1>
+      </div>
+      <div class="write-actions">
+        <button type="button" data-copy-post>复制全文</button>
+        <button type="button" data-reset-draft>清空</button>
+      </div>
+    </header>
+
+    <div class="write-shell">
+      <form class="write-form" data-write-form>
+        <label>
+          <span>标题</span>
+          <input name="title" type="text" value="新的博客文章" />
+        </label>
+        <label>
+          <span>简介</span>
+          <input name="description" type="text" value="这里写一句文章简介。" />
+        </label>
+        <div class="write-fields">
+          <label>
+            <span>分类</span>
+            <input name="category" type="text" value="随记" />
+          </label>
+          <label>
+            <span>标签</span>
+            <input name="tags" type="text" placeholder="Astro,博客" />
+          </label>
+        </div>
+        <div class="write-fields">
+          <label>
+            <span>日期</span>
+            <input name="pubDate" type="date" />
+          </label>
+          <label class="write-checkbox">
+            <input name="draft" type="checkbox" />
+            <span>保存为草稿</span>
+          </label>
+        </div>
+        <label>
+          <span>封面图</span>
+          <input name="cover" type="text" placeholder="/images/covers/post.svg" />
+        </label>
+        <label>
+          <span>封面描述</span>
+          <input name="coverAlt" type="text" placeholder="描述这张封面图" />
+        </label>
+        <label class="write-editor">
+          <span>正文</span>
+          <textarea name="body" spellcheck="false">## 小标题
+
+从这里开始写正文。
+
+- 可以写列表
+- 可以写代码
+- 可以一点点打磨
+</textarea>
+        </label>
+      </form>
+
+      <aside class="write-preview" aria-labelledby="preview-title">
+        <div class="write-preview-toolbar">
+          <h2 id="preview-title">实时预览</h2>
+          <p data-copy-status aria-live="polite"></p>
+        </div>
+        <article class="post-content" data-preview></article>
+        <details class="write-output">
+          <summary>生成的 Markdown</summary>
+          <pre><code data-output></code></pre>
+        </details>
+      </aside>
+    </div>
+  </section>
+
+  <script>
+    // @ts-nocheck
+    import { marked } from "marked";
+
+    const form = document.querySelector("[data-write-form]");
+    const preview = document.querySelector("[data-preview]");
+    const output = document.querySelector("[data-output]");
+    const copyButton = document.querySelector("[data-copy-post]");
+    const resetButton = document.querySelector("[data-reset-draft]");
+    const status = document.querySelector("[data-copy-status]");
+    const storageKey = "personal-blog-write-draft";
+
+    if (
+      !(form instanceof HTMLFormElement) ||
+      !(preview instanceof HTMLElement) ||
+      !(output instanceof HTMLElement) ||
+      !(copyButton instanceof HTMLButtonElement) ||
+      !(resetButton instanceof HTMLButtonElement) ||
+      !(status instanceof HTMLElement)
+    ) {
+      throw new Error("Write page is missing required elements.");
+    }
+
+    const fields = {
+      title: form.elements.namedItem("title"),
+      description: form.elements.namedItem("description"),
+      category: form.elements.namedItem("category"),
+      tags: form.elements.namedItem("tags"),
+      pubDate: form.elements.namedItem("pubDate"),
+      draft: form.elements.namedItem("draft"),
+      cover: form.elements.namedItem("cover"),
+      coverAlt: form.elements.namedItem("coverAlt"),
+      body: form.elements.namedItem("body")
+    };
+
+    function isInput(field) {
+      return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement;
+    }
+
+    function getValue(name) {
+      const field = fields[name];
+      return isInput(field) ? field.value.trim() : "";
+    }
+
+    function setValue(name, value) {
+      const field = fields[name];
+      if (isInput(field)) field.value = value;
+    }
+
+    function getDraftValue() {
+      return fields.draft instanceof HTMLInputElement && fields.draft.checked;
+    }
+
+    function setDraftValue(value) {
+      if (fields.draft instanceof HTMLInputElement) fields.draft.checked = value;
+    }
+
+    function today() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function escapeYaml(value) {
+      return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+    }
+
+    function formatTags(value) {
+      const tags = value
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean);
+
+      return `[${tags.map((tag) => `"${escapeYaml(tag)}"`).join(", ")}]`;
+    }
+
+    function buildMarkdown() {
+      const cover = getValue("cover");
+      const coverAlt = getValue("coverAlt");
+      const coverFields = cover
+        ? `cover: "${escapeYaml(cover)}"\ncoverAlt: "${escapeYaml(coverAlt)}"\n`
+        : "";
+
+      return `---
+title: "${escapeYaml(getValue("title") || "未命名文章")}"
+description: "${escapeYaml(getValue("description") || "暂无简介。")}"
+${coverFields}category: "${escapeYaml(getValue("category") || "随记")}"
+tags: ${formatTags(getValue("tags"))}
+pubDate: "${getValue("pubDate") || today()}"
+draft: ${getDraftValue()}
+---
+
+${getValue("body") || "从这里开始写正文。"}`;
+    }
+
+    function sanitizeHtml(html) {
+      const documentFragment = new DOMParser().parseFromString(html, "text/html");
+      documentFragment
+        .querySelectorAll("script, style, iframe, object, embed")
+        .forEach((node) => node.remove());
+
+      documentFragment.body.querySelectorAll("*").forEach((node) => {
+        [...node.attributes].forEach((attribute) => {
+          const name = attribute.name.toLowerCase();
+          const value = attribute.value.trim().toLowerCase();
+
+          if (name.startsWith("on") || value.startsWith("javascript:")) {
+            node.removeAttribute(attribute.name);
+          }
+        });
+      });
+
+      return documentFragment.body.innerHTML;
+    }
+
+    function saveDraft() {
+      const data = Object.fromEntries(
+        Object.entries(fields).map(([name, field]) => [
+          name,
+          field instanceof HTMLInputElement && field.type === "checkbox"
+            ? field.checked
+            : isInput(field)
+              ? field.value
+              : ""
+        ])
+      );
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    function loadDraft() {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) {
+        setValue("pubDate", today());
+        return;
+      }
+
+      try {
+        const data = JSON.parse(saved);
+        Object.entries(data).forEach(([name, value]) => {
+          if (name === "draft") setDraftValue(Boolean(value));
+          else setValue(name, String(value ?? ""));
+        });
+      } catch {
+        setValue("pubDate", today());
+      }
+    }
+
+    function render() {
+      const body = getValue("body") || "从这里开始写正文。";
+      output.textContent = buildMarkdown();
+      preview.innerHTML = sanitizeHtml(marked.parse(body, { async: false }));
+      saveDraft();
+    }
+
+    form.addEventListener("input", render);
+
+    copyButton.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(buildMarkdown());
+      status.textContent = "已复制";
+      window.setTimeout(() => {
+        status.textContent = "";
+      }, 1400);
+    });
+
+    resetButton.addEventListener("click", () => {
+      localStorage.removeItem(storageKey);
+      form.reset();
+      setValue("title", "新的博客文章");
+      setValue("description", "这里写一句文章简介。");
+      setValue("category", "随记");
+      setValue("pubDate", today());
+      render();
+    });
+
+    loadDraft();
+    render();
+  </script>
+</BaseLayout>

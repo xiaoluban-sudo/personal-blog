@@ -18,6 +18,7 @@ export const siteConfig = {
     { label: "归档", href: "/archive/" },
     { label: "分类", href: "/categories/" },
     { label: "标签", href: "/tags/" },
+    { label: "写作", href: "/write/" },
     { label: "关于", href: "/about/" },
     { label: "RSS", href: "/rss.xml" }
   ]
