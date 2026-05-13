@@ -161,8 +161,17 @@ const formattedDate = new Intl.DateTimeFormat("zh-CN", {
       )
     }
   </article>
-  <script is:inline>
+  <script is:inline define:vars={{ base }}>
+    const basePath = base;
     const copyButton = document.querySelector("[data-copy-link]");
+
+    document.querySelectorAll('.post-content img[src^="/"]').forEach((image) => {
+      const source = image.getAttribute("src");
+
+      if (source && !source.startsWith(basePath)) {
+        image.setAttribute("src", `${basePath}${source.replace(/^\//, "")}`);
+      }
+    });
 
     copyButton?.addEventListener("click", async () => {
       const originalText = copyButton.textContent;
