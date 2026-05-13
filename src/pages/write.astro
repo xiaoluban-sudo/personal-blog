@@ -115,6 +115,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <p data-copy-status aria-live="polite"></p>
         </div>
         <article class="post-content" data-preview></article>
+        <section class="publish-checklist" aria-labelledby="publish-checklist-title">
+          <div class="publish-checklist-header">
+            <h2 id="publish-checklist-title">发布清单</h2>
+            <p data-publish-summary></p>
+          </div>
+          <ul data-publish-checklist></ul>
+        </section>
         <details class="write-output">
           <summary>生成的 Markdown</summary>
           <pre><code data-output></code></pre>
@@ -156,6 +163,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     const form = document.querySelector("[data-write-form]");
     const preview = document.querySelector("[data-preview]");
     const output = document.querySelector("[data-output]");
+    const publishSummary = document.querySelector("[data-publish-summary]");
+    const publishChecklist = document.querySelector("[data-publish-checklist]");
     const copyButton = document.querySelector("[data-copy-post]");
     const downloadButton = document.querySelector("[data-download-post]");
     const resetButton = document.querySelector("[data-reset-draft]");
@@ -173,6 +182,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       !(form instanceof HTMLFormElement) ||
       !(preview instanceof HTMLElement) ||
       !(output instanceof HTMLElement) ||
+      !(publishSummary instanceof HTMLElement) ||
+      !(publishChecklist instanceof HTMLElement) ||
       !(copyButton instanceof HTMLButtonElement) ||
       !(downloadButton instanceof HTMLButtonElement) ||
       !(resetButton instanceof HTMLButtonElement) ||
@@ -336,6 +347,82 @@ ${getValue("body") || "从这里开始写正文。"}`;
       return documentFragment.body.innerHTML;
     }
 
+    function hasBodyImages(body) {
+      return /!\[[^\]]*\]\(([^)]+)\)/.test(body);
+    }
+
+    function isDefaultBody(body) {
+      return body.includes("从这里开始写正文。") && body.length < 80;
+    }
+
+    function renderPublishChecklist() {
+      const title = getValue("title");
+      const description = getValue("description");
+      const category = getValue("category");
+      const pubDate = getValue("pubDate");
+      const body = getValue("body");
+      const cover = getValue("cover");
+      const isDraft = getDraftValue();
+      const bodyUsesImages = hasBodyImages(body);
+      const checks = [
+        {
+          ok: Boolean(title),
+          text: "标题已填写"
+        },
+        {
+          ok: Boolean(description),
+          text: "简介已填写"
+        },
+        {
+          ok: Boolean(category),
+          text: "分类已填写"
+        },
+        {
+          ok: Boolean(pubDate),
+          text: "发布日期已填写"
+        },
+        {
+          ok: Boolean(body) && !isDefaultBody(body),
+          text: "正文已经替换默认占位内容"
+        },
+        {
+          ok: !cover || cover.startsWith("http") || cover.startsWith("/images/covers/"),
+          text: cover
+            ? "封面路径建议放在 public/images/covers/"
+            : "没有封面图，可以跳过封面检查"
+        },
+        {
+          ok: !bodyUsesImages,
+          text: bodyUsesImages
+            ? "正文里有图片，发布前确认图片已放入 public/images/posts/"
+            : "正文暂未使用图片"
+        },
+        {
+          ok: isDraft,
+          text: isDraft
+            ? "当前是草稿，本地可预览，生产部署会隐藏"
+            : "当前不是草稿，下载后可放入 src/content/posts/ 发布"
+        },
+        {
+          ok: false,
+          text: "最后执行 git add、git commit、git push 触发部署"
+        }
+      ];
+      const readyCount = checks.filter((check) => check.ok).length;
+
+      publishSummary.textContent = `${readyCount}/${checks.length} 项已就绪`;
+      publishChecklist.innerHTML = checks
+        .map(
+          (check) => `
+            <li data-ready="${check.ok}">
+              <span aria-hidden="true">${check.ok ? "✓" : "•"}</span>
+              ${check.text}
+            </li>
+          `
+        )
+        .join("");
+    }
+
     function saveDraft() {
       const data = Object.fromEntries(
         Object.entries(fields).map(([name, field]) => [
@@ -372,6 +459,7 @@ ${getValue("body") || "从这里开始写正文。"}`;
       const body = getValue("body") || "从这里开始写正文。";
       output.textContent = buildMarkdown();
       preview.innerHTML = sanitizeHtml(marked.parse(body, { async: false }));
+      renderPublishChecklist();
       saveDraft();
     }
 

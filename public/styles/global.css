@@ -989,6 +989,70 @@ h2 {
   padding-top: 10px;
 }
 
+.publish-checklist {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.publish-checklist-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.publish-checklist h2 {
+  font-size: 20px;
+}
+
+.publish-checklist-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.publish-checklist ul {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.publish-checklist li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+  background: var(--bg);
+}
+
+.publish-checklist li[data-ready="true"] {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.publish-checklist span {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
 .write-output {
   border-top: 1px solid var(--line);
   padding-top: 14px;
